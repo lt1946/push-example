@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cn.jpush.android.example"
+    android:versionCode="125"
+    android:versionName="1.2.5"
+    >
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="7" />
+    <!-- Required 自定义用来收发消息的相关权限 -->               
+    <permission
+        android:name="cn.jpush.android.example.permission.JPUSH_MESSAGE"
+        android:protectionLevel="signature" />
+  
+    <!-- Required  一些系统要求的权限，如访问网络等-->
+    <uses-permission android:name="cn.jpush.android.example.permission.JPUSH_MESSAGE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RECEIVE_USER_PRESENT" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>  
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    
+    <!-- Optional for location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:name=".ExampleApplication">
+        <!-- For test only 测试的主程序-->
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <!-- For test only 测试状态通知栏，需要打开的Activity -->
+        <activity android:name=".TestActivity" >
+            <intent-filter>
+                <action android:name="jpush.testAction" />
+                <category android:name="jpush.testCategory" />
+            </intent-filter>
+        </activity>  
+        
+        <!-- ANT FALG BEGIN1-->
+        <!-- Required SDK核心功能,第三方开发者不需要开始-->
+        <activity
+            android:name="cn.jpush.android.ui.PushActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:configChanges="orientation|keyboardHidden" >
+            <intent-filter>
+                <action android:name="cn.jpush.android.ui.PushActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- NOTE: replace "cn.jpush.android.example" to your app's packagen name -->
+                <category android:name="cn.jpush.android.example" />
+            </intent-filter>
+        </activity>
+        <!-- Required  SDK核心功能-->
+        <service
+            android:name="cn.jpush.android.service.DownloadService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
+        <!-- ANT FALG END1-->
+        
+        <!-- Required SDK 核心功能-->
+        <service
+            android:name="cn.jpush.android.service.PushService"
+            android:enabled="true"
+            android:exported="false" android:process=":message">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTER" />
+                <action android:name="cn.jpush.android.intent.REPORT" />
+                <action android:name="cn.jpush.android.intent.PushService" />
+                <action android:name="cn.jpush.android.intent.PUSH_TIME" />
+            </intent-filter>
+        </service>
+        
+        <!-- Required SDK核心功能-->
+        <receiver
+            android:name="cn.jpush.android.service.PushReceiver"
+            android:enabled="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <data android:scheme="package" />
+            </intent-filter>
+             <!-- ANT FALG BEGIN2-->
+            <intent-filter>
+                 <action android:name="cn.jpush.android.intent.SHOW_FLOAT_VIEW_ACTION" />
+                <action android:name="cn.jpush.android.intent.SYSTEM_FULLSCREEN_ACTION" />
+                <category android:name="cn.jpush.android.intent.SYSTEM_FULLSCREEN_CATEGORY" />
+            </intent-filter>
+            <!-- ANT FALG END2-->
+        </receiver>
+        
+        <!-- Required SDK核心功能-->
+        <receiver android:name="cn.jpush.android.service.AlarmReceiver" />
+        
+        <!-- User defined.  For test only  用户自定义的广播接收器-->
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTRATION" /> <!--Required  用户注册SDK的权限-->
+                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" /><!--Required  用户接收SDK消息的权限-->
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" /><!--Required  用户接收SDK通知栏信息的权限-->
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" />   <!--Required  用户打开自定义通知栏的权限-->
+                <!-- NOTE: replace the package name "cn.jpush.android" to your app package name -->
+                <category android:name="cn.jpush.android.example" />
+            </intent-filter>
+        </receiver>
+        
+        <!-- Required  . Enable it you can get statistics data with channel -->
+        <meta-data android:name="JPUSH_CHANNEL" android:value="developer-default"/>
+        <meta-data android:name="JPUSH_APPKEY" android:value="ba15bf382b41f016385a0d6f" /> <!--  </>值来自开发者平台取得的AppKey-->
+        
+    </application>
+</manifest>
+
